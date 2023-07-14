@@ -10,6 +10,7 @@ public class Beacon {
 
     private int rssi;
     private Double prevDistance;
+    private String macAddress;
     private int locationX;
     private int locationY;
 
@@ -69,5 +70,20 @@ public class Beacon {
         return locationY;
     }
 
+    public String getMacAddress() {
+        return macAddress;
+    }
+    public byte[] getMacAddressInBytes(){
+        String[] macAddressParts = macAddress.split(":");
+        byte[] macAddressBytes = new byte[6];
+        for(int i=0; i<6; i++){
+            int hex = Integer.parseInt(macAddressParts[i],16);
+            macAddressBytes[i] = (byte)hex;
+        }
+        return macAddressBytes;
+    }
 
+    public void setMacAddress(String macAddress) {
+        this.macAddress = macAddress;
+    }
 }

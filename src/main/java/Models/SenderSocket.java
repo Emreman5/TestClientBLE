@@ -5,18 +5,19 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 
 public class SenderSocket {
-    private final String hostName;
-    private final int portNumber;
-    private final Socket socket;
+    private  String hostName;
+    private  int portNumber;
+    private  Socket socket;
 
     public SenderSocket(String hostName, int portNumber) {
         this.hostName = hostName;
         this.portNumber = portNumber;
         socket = CreateSocket();
+    }
+    public SenderSocket(){
+
     }
 
     private Socket CreateSocket() {
@@ -35,7 +36,7 @@ public class SenderSocket {
         try {
             DataOutputStream dout = new DataOutputStream(socket.getOutputStream());
             dout.writeInt(data.length);
-            dout.write(data);
+            dout.write(data);;
         } catch (IOException e) {
             System.out.println("CONNECTION RESET");
         }
@@ -43,10 +44,17 @@ public class SenderSocket {
 
     public byte[] CreateData(Beacon b1, Beacon b2, Beacon b3, Client client) {
         var arr = Arrays.asList(b1, b2, b3);
-        var data = new byte[6];
-        for (int i = 0; i < arr.toArray().length *2 - 1; i+=2) {
-            data[i] = (byte) arr.get(i / 2).getTx_pow();
-            data[i+1] = (byte) arr.get(i / 2).GetRssi(client);
+        var data = new byte[21];
+        int arrCount = 0;
+        for (int i = 0; i < data.length ; i+= data.length / 3) {
+            int innerArrCount = 0;
+            data[i] = (byte) arr.get(arrCount).GetRssi(client);
+            var macAddressInBytes = arr.get(arrCount).getMacAddressInBytes();
+            for (int j = i + 1; j < i + (data.length / 3) ; j++) {
+                    data[j] = macAddressInBytes[innerArrCount];
+                    innerArrCount++;
+            }
+            arrCount++;
         }
         return data;
     }
