@@ -11,6 +11,7 @@ public class Beacon {
     private int rssi;
     private Double prevDistance;
     private String macAddress;
+    private final double N = 2.4;
     private int locationX;
     private int locationY;
 
@@ -20,8 +21,14 @@ public class Beacon {
         this.tx_pow = tx_pow;
         this.rssi = rssi;
     }
+    public Beacon(int locationX, int locationY, int tx_pow) {
+        this.locationX = locationX;
+        this.locationY = locationY;
+        this.tx_pow = tx_pow;
+    }
 
-    public int GetRssi(Client client){
+
+    public int getRssi(Client client){
         var distance =
                 Math.sqrt(Math.pow(client.getRealXLocation() - locationX,2) + Math.pow(client.getRealYLocation() - locationY,2));
         if (prevDistance == null){
@@ -30,7 +37,7 @@ public class Beacon {
         }
         if (prevDistance > distance){
             var diff = (prevDistance - distance) / 100;
-            var rssiDiff = tx_pow * diff;
+            var rssiDiff = tx_pow * diff / 5;
             rssi += rssiDiff;
             prevDistance = distance;
             return rssi;
@@ -39,11 +46,17 @@ public class Beacon {
             return rssi;
         }
         var diff = (distance - prevDistance) / 100;
-        var rssiDiff = tx_pow *diff;
+        var rssiDiff = tx_pow *diff / 5;
         rssi -= rssiDiff;
         prevDistance = distance;
         return rssi;
 
+    }
+    public int getRssiAlt(Client client){
+        var distance =
+                Math.sqrt(Math.pow(client.getRealXLocation() - locationX,2) + Math.pow(client.getRealYLocation() - locationY,2));
+        var rssi =  this.tx_pow - (10 * this.N * (Math.log10(distance / 100)));
+        return (int)Math.round(rssi);
     }
 
     public int getId() {

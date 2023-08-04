@@ -3,8 +3,12 @@ package Models;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class SenderSocket {
     private  String hostName;
@@ -35,6 +39,7 @@ public class SenderSocket {
     public void SendData(byte[] data) {
         try {
             DataOutputStream dout = new DataOutputStream(socket.getOutputStream());
+            System.out.println(data.length);
             dout.writeInt(data.length);
             dout.write(data);;
         } catch (IOException e) {
@@ -48,7 +53,7 @@ public class SenderSocket {
         int arrCount = 0;
         for (int i = 0; i < data.length ; i+= data.length / 3) {
             int innerArrCount = 0;
-            data[i] = (byte) arr.get(arrCount).GetRssi(client);
+            data[i] = (byte) arr.get(arrCount).getRssiAlt(client);
             var macAddressInBytes = arr.get(arrCount).getMacAddressInBytes();
             for (int j = i + 1; j < i + (data.length / 3) ; j++) {
                     data[j] = macAddressInBytes[innerArrCount];
@@ -56,7 +61,19 @@ public class SenderSocket {
             }
             arrCount++;
         }
-        return data;
+        var realLocationX = ByteBuffer.allocate(4).putInt(client.getRealXLocation()).array();
+        var realLocationY = ByteBuffer.allocate(4).putInt(client.getRealYLocation()).array();
+        byte[] realLocation = new byte[realLocationY.length + realLocationY.length];
+        for (int i = 0; i < realLocation.length ; i++) {
+            realLocation[i] = i < realLocationX.length ? realLocationX[i] : realLocationY[i - realLocationX.length];
+        }
+        var resultData = new byte[data.length + realLocation.length];
+        var buf = ByteBuffer.wrap(resultData);
+        buf.position(0);
+        buf.put(data);
+        buf.position(data.length);
+        buf.put(realLocation);
+        return resultData;
     }
 }
 

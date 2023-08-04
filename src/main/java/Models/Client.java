@@ -1,8 +1,8 @@
 package Models;
 
 public class Client{
-    private int realXLocation = 500;
-    private int realYLocation = 500;
+    private int realXLocation = 100;
+    private int realYLocation = 100;
     private int predictedXLocation;
     private int predictedYLocation;
 

@@ -14,7 +14,7 @@ public class Launch {
         Client client;
         client = new Client();
         var b1 = new Beacon(0, 0, 30, 45);
-        var b2 = new Beacon(500, 500, 35, 35);
+        var b2 = new Beacon(500, 1000, 35, 35);
         var b3 = new Beacon(1000, 0, 40, 55);
         b1.setMacAddress("00:2B:67:C7:20:A6");
         b2.setMacAddress("00:2B:67:C7:20:A6");
@@ -40,9 +40,9 @@ public class Launch {
                 var msg1 = MessageFormat.format("Real Location X = {0}, Real Location Y = {1}", client.getRealXLocation()
                         , client.getRealYLocation());
                 var msg2 = MessageFormat.format("Hareket edilen mesafe X = {0}, Y = {1}", xVar, yVar);
-                var msg3 = MessageFormat.format("Beacon 1 Rssi : {0}", b1.GetRssi(client));
-                var msg4 = MessageFormat.format("Beacon 2 Rssi : {0}", b2.GetRssi(client));
-                var msg5 = MessageFormat.format("Beacon 3 Rssi : {0}", b3.GetRssi(client));
+                var msg3 = MessageFormat.format("Beacon 1 Rssi : {0}", b1.getRssi(client));
+                var msg4 = MessageFormat.format("Beacon 2 Rssi : {0}", b2.getRssi(client));
+                var msg5 = MessageFormat.format("Beacon 3 Rssi : {0}", b3.getRssi(client));
                 System.out.println(msg1);
                 System.out.println(msg2);
                 System.out.println(msg3);
@@ -55,9 +55,9 @@ public class Launch {
 
     private static void clientReq() {
         var client = new Client();
-        var b1 = new Beacon(0, 0, 30, 45);
-        var b2 = new Beacon(100, 200, 35, 35);
-        var b3 = new Beacon(200, 0, 40, 55);
+        var b1 = new Beacon(0, 0, -35);
+        var b2 = new Beacon(100, 200, -35);
+        var b3 = new Beacon(200, 0, -35);
         b1.setMacAddress("00:2B:67:C7:20:A6");
         b2.setMacAddress("02:50:F2:70:83:00");
         b3.setMacAddress("DE:3A:45:2D:48:1F");
@@ -78,9 +78,9 @@ public class Launch {
             System.out.println(MessageFormat.format("Ölçülen rssi değerleri Count = {3} \nB1 = {0}\nB2 = {1}\nB3 " +
                             "= " +
                             "{2}",
-                    b1.GetRssi(client), b2.GetRssi(client), b3.GetRssi(client), ++count));
-            xVar = rnd.nextInt(-100, 100);
-            yVar = rnd.nextInt(-100, 100);
+                    b1.getRssiAlt(client), b2.getRssiAlt(client), b3.getRssiAlt(client), ++count));
+            xVar = rnd.nextInt(0, 5000);
+            yVar = rnd.nextInt(0, 5000);
             client.moveHorizontal(xVar);
             client.moveVertical(yVar);
 
